@@ -27,7 +27,36 @@ npm run preview
 
 ### Cloudflare Pages
 
-Deploy the **`dist/`* *folder as a static site (build command `npm run build`, output directory `dist`). `vite.config.ts` sets `base: "./"` so asset paths work on project or subdirectory deploys.
+Deploy the **`dist/`** folder as a static site (build command `npm run build`, output directory `dist`). `vite.config.ts` sets `base: "./"` so asset paths work on project or subdirectory deploys.
+
+#### Automated deployment via GitHub Actions
+
+This repo includes a GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) that automatically deploys to Cloudflare Pages on every push to `main`.
+
+**Setup steps:**
+
+1. **Create a Cloudflare API token**
+   - Go to [Cloudflare Dashboard → API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+   - Click "Create Token"
+   - Use the "Edit Cloudflare Workers" template or create a custom token with:
+     - **Account → Cloudflare Pages → Edit** permissions
+     - **Account Settings → Read** permissions (if needed)
+   - Copy the generated token
+
+2. **Add GitHub repository secrets**
+   - Go to your GitHub repo → Settings → Secrets and variables → Actions
+   - Add two secrets:
+     - `CLOUDFLARE_API_TOKEN`: your API token from step 1
+     - `CLOUDFLARE_ACCOUNT_ID`: your Cloudflare account ID (found in the URL or dashboard sidebar)
+
+3. **Deploy**
+   - Push to `main` branch, or
+   - Manually trigger via Actions → Deploy to Cloudflare Pages → Run workflow
+
+4. **Custom domain (optional)**
+   - Go to [Cloudflare Dashboard → Pages](https://dash.cloudflare.com/) → qr-art project → Custom domains
+   - Add `qr.xzyqrn.com`
+   - Cloudflare will automatically configure DNS if the domain is managed in your account
 
 ## Features
 
