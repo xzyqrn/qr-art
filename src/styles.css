@@ -545,7 +545,8 @@ input[type="range"] {
 .preview-stage.is-3d[data-kit="film"] .qr-3d canvas {
   box-shadow: none;
 }
-\n/* —— Preview —— */
+
+/* —— Preview —— */
 .preview-toolbar {
   display: flex;
   flex-wrap: wrap;
