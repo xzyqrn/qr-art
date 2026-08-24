@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="xzyqrn qr — design and export artistic QR codes from a URL. Presets, colors, shapes, optional logo."
+    />
+    <title>xzyqrn qr</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <h1 class="wordmark">
+            <span class="wordmark-accent" aria-hidden="true"></span>
+            <span class="wordmark-name">xzyqrn</span>
+            <span class="wordmark-qr">qr</span>
+          </h1>
+          <p class="tagline">Not another boring square</p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel controls" aria-label="QR settings">
+          <div class="field">
+            <label for="url">Link / URL</label>
+            <input
+              id="url"
+              type="url"
+              inputmode="url"
+              autocomplete="url"
+              placeholder="https://example.com"
+              value="https://example.com"
+              spellcheck="false"
+            />
+          </div>
+
+          <fieldset class="field styles">
+            <legend>Style</legend>
+            <div class="style-toolbar">
+              <button type="button" id="surprise" class="btn secondary surprise-btn">
+                Surprise me
+              </button>
+            </div>
+            <div class="style-grid" id="style-grid" role="listbox" aria-label="Art style presets"></div>
+            <p class="hint">Pattern styles change module shapes only — your colors stay yours.</p>
+          </fieldset>
+
+          <fieldset class="field kits">
+            <legend>Kit</legend>
+            <div class="kit-grid" id="kit-grid" role="listbox" aria-label="Poster brand kits"></div>
+          </fieldset>
+
+          <div class="color-grid">
+            <div class="field">
+              <label for="dots">Dots</label>
+              <div class="color-wrap">
+                <input id="dots" type="color" value="#000000" aria-label="Dots color" />
+                <span id="dots-hex" class="hex">#000000</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="bg">Background</label>
+              <div class="color-wrap" id="bg-wrap">
+                <input id="bg" type="color" value="#ffffff" aria-label="Background color" />
+                <span id="bg-hex" class="hex">#ffffff</span>
+              </div>
+              <label class="check-row bg-transparent-row" for="bg-transparent">
+                <input id="bg-transparent" type="checkbox" />
+                <span>Transparent background</span>
+              </label>
+            </div>
+            <div class="field">
+              <label for="corner-sq">Outer corners</label>
+              <div class="color-wrap">
+                <input id="corner-sq" type="color" value="#000000" aria-label="Outer corners color" />
+                <span id="corner-sq-hex" class="hex">#000000</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="corner-dot">Inner corners</label>
+              <div class="color-wrap">
+                <input id="corner-dot" type="color" value="#000000" aria-label="Inner corners color" />
+                <span id="corner-dot-hex" class="hex">#000000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="dot-type">Dot shape</label>
+              <select id="dot-type">
+                <option value="rounded">Rounded</option>
+                <option value="dots">Dots</option>
+                <option value="classy">Classy</option>
+                <option value="classy-rounded">Classy rounded</option>
+                <option value="square">Square</option>
+                <option value="extra-rounded">Extra rounded</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="corner-type">Corner squares</label>
+              <select id="corner-type">
+                <option value="extra-rounded">Extra rounded</option>
+                <option value="dot">Dot</option>
+                <option value="square">Square</option>
+                <option value="rounded">Rounded</option>
+                <option value="dots">Dots</option>
+                <option value="classy">Classy</option>
+                <option value="classy-rounded">Classy rounded</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="corner-dot-type">Corner dots shape</label>
+              <select id="corner-dot-type">
+                <option value="dot">Dot</option>
+                <option value="square">Square</option>
+                <option value="rounded">Rounded</option>
+                <option value="dots">Dots</option>
+                <option value="classy">Classy</option>
+                <option value="classy-rounded">Classy rounded</option>
+                <option value="extra-rounded">Extra rounded</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="error-level">Error correction</label>
+              <select id="error-level">
+                <option value="L">L — ~7%</option>
+                <option value="M">M — ~15%</option>
+                <option value="Q">Q — ~25%</option>
+                <option value="H" selected>H — ~30%</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="margin">Margin / quiet zone <span id="margin-label">8 px</span></label>
+            <input id="margin" type="range" min="0" max="40" step="1" value="8" />
+          </div>
+
+          <div class="field">
+            <label for="size">Size <span id="size-label">320 px</span></label>
+            <input id="size" type="range" min="200" max="640" step="20" value="320" />
+          </div>
+
+          <fieldset class="field logo-block">
+            <legend>Center logo</legend>
+            <div class="field">
+              <label for="logo-url">Image URL</label>
+              <input
+                id="logo-url"
+                type="url"
+                inputmode="url"
+                placeholder="https://…/logo.png"
+                spellcheck="false"
+              />
+            </div>
+            <div class="field">
+              <label for="logo-file">Or upload file</label>
+              <input id="logo-file" type="file" accept="image/*" />
+            </div>
+            <div class="field">
+              <label for="logo-size">Logo size <span id="logo-size-label">0.28</span></label>
+              <input id="logo-size" type="range" min="0.15" max="0.4" step="0.01" value="0.28" />
+            </div>
+            <label class="check-row" for="hide-dots">
+              <input id="hide-dots" type="checkbox" checked />
+              <span>Hide dots under logo</span>
+            </label>
+            <p class="hint">Optional overlay. Encoded data stays your link.</p>
+            <button type="button" id="clear-logo" class="btn ghost" hidden>Clear logo</button>
+          </fieldset>
+        </section>
+
+        <section class="panel preview-panel" aria-label="Preview">
+          <div class="preview-toolbar">
+            <div class="preview-heading">
+              <h2>Preview</h2>
+              <div class="mode-toggle" role="group" aria-label="Preview mode">
+                <button type="button" class="mode-btn" id="mode-2d" aria-pressed="true">2D</button>
+                <button type="button" class="mode-btn" id="mode-3d" aria-pressed="false">3D</button>
+              </div>
+            </div>
+            <div class="export-actions">
+              <button type="button" id="export-png" class="btn primary">Export PNG</button>
+              <button type="button" id="export-svg" class="btn secondary">Export SVG</button>
+              <button type="button" id="export-poster" class="btn secondary">Export poster</button>
+              <button type="button" id="export-motion" class="btn secondary">Export motion</button>
+              <button type="button" id="export-3d-png" class="btn secondary" hidden>Export 3D PNG</button>
+            </div>
+          </div>
+          <div class="preview-stage" id="preview-stage">
+            <div id="qr" class="qr-canvas" role="img" aria-label="Artistic QR code preview"></div>
+            <div id="qr3d" class="qr-3d" hidden aria-label="3D QR code preview"></div>
+          </div>
+          <p id="status" class="status" aria-live="polite"></p>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>Runs in your browser · export locally</span>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
