@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="xzyqrn qr — design and export artistic QR codes from a URL. Presets, colors, shapes, optional logo."
+      content="xzyqrn qr — design and export artistic QR codes. Links, Wi-Fi, vCards, posters, frames, optional logo."
     />
     <title>xzyqrn qr</title>
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="apple-touch-icon" href="./favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,17 +32,196 @@
 
       <main class="layout">
         <section class="panel controls" aria-label="QR settings">
-          <div class="field">
-            <label for="url">Link / URL</label>
-            <input
-              id="url"
-              type="url"
-              inputmode="url"
-              autocomplete="url"
-              placeholder="https://example.com"
-              value="https://example.com"
-              spellcheck="false"
-            />
+          <div class="field payload-block">
+            <div class="payload-type-header">
+              <span class="payload-label">Encoded content</span>
+              <button type="button" id="scan-qr" class="btn ghost scan-btn">Scan QR</button>
+            </div>
+            <div class="payload-type-pills" role="tablist" aria-label="Payload type">
+              <button type="button" class="type-pill active" role="tab" aria-selected="true" data-type="url">Link</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="wifi">Wi-Fi</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="vcard">vCard</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="whatsapp">WhatsApp</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="sms">SMS</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="email">Email</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="phone">Phone</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="text">Text</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="crypto">Crypto</button>
+              <button type="button" class="type-pill" role="tab" aria-selected="false" data-type="event">Event</button>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="url">
+              <label class="visually-hidden" for="url">Link or URL</label>
+              <input
+                id="url"
+                type="text"
+                autocomplete="off"
+                placeholder="https://example.com"
+                value="https://example.com"
+                spellcheck="false"
+              />
+            </div>
+
+            <div class="payload-panel" data-payload-panel="wifi" hidden>
+              <div class="field-row">
+                <div class="field">
+                  <label for="wifi-ssid">Network name</label>
+                  <input id="wifi-ssid" type="text" autocomplete="off" placeholder="Cafe Guest" />
+                </div>
+                <div class="field" id="wifi-pass-wrap">
+                  <label for="wifi-pass">Password</label>
+                  <input id="wifi-pass" type="text" autocomplete="off" placeholder="optional" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="wifi-auth">Security</label>
+                  <select id="wifi-auth">
+                    <option value="WPA" selected>WPA / WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">Open (no password)</option>
+                  </select>
+                </div>
+                <label class="check-row" for="wifi-hidden">
+                  <input id="wifi-hidden" type="checkbox" />
+                  <span>Hidden network</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="vcard" hidden>
+              <div class="field-row">
+                <div class="field">
+                  <label for="vcard-first">First name</label>
+                  <input id="vcard-first" type="text" autocomplete="given-name" placeholder="Jane" />
+                </div>
+                <div class="field">
+                  <label for="vcard-last">Last name</label>
+                  <input id="vcard-last" type="text" autocomplete="family-name" placeholder="Doe" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="vcard-phone">Phone</label>
+                  <input id="vcard-phone" type="tel" autocomplete="tel" placeholder="+1 555 0100" />
+                </div>
+                <div class="field">
+                  <label for="vcard-email">Email</label>
+                  <input id="vcard-email" type="email" autocomplete="email" placeholder="jane@studio.com" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="vcard-company">Company</label>
+                  <input id="vcard-company" type="text" autocomplete="organization" />
+                </div>
+                <div class="field">
+                  <label for="vcard-title">Title</label>
+                  <input id="vcard-title" type="text" autocomplete="organization-title" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="vcard-url">Website</label>
+                <input id="vcard-url" type="url" inputmode="url" placeholder="https://" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="vcard-address">Address</label>
+                <input id="vcard-address" type="text" autocomplete="street-address" />
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="whatsapp" hidden>
+              <div class="field">
+                <label for="wa-phone">Phone (country code, no +)</label>
+                <input id="wa-phone" type="tel" placeholder="15551234567" />
+              </div>
+              <div class="field">
+                <label for="wa-message">Prefilled message</label>
+                <textarea id="wa-message" rows="2" placeholder="Hello from the studio"></textarea>
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="sms" hidden>
+              <div class="field">
+                <label for="sms-phone">Phone</label>
+                <input id="sms-phone" type="tel" placeholder="+1 555 0100" />
+              </div>
+              <div class="field">
+                <label for="sms-message">Message</label>
+                <textarea id="sms-message" rows="2"></textarea>
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="email" hidden>
+              <div class="field">
+                <label for="email-to">To</label>
+                <input id="email-to" type="email" placeholder="hello@studio.com" />
+              </div>
+              <div class="field">
+                <label for="email-subject">Subject</label>
+                <input id="email-subject" type="text" />
+              </div>
+              <div class="field">
+                <label for="email-body">Body</label>
+                <textarea id="email-body" rows="3"></textarea>
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="phone" hidden>
+              <div class="field">
+                <label for="phone-number">Phone number</label>
+                <input id="phone-number" type="tel" placeholder="+1 555 0100" />
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="text" hidden>
+              <label class="visually-hidden" for="plain-text">Plain text</label>
+              <textarea id="plain-text" rows="3" placeholder="Any note, code, or line of text"></textarea>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="crypto" hidden>
+              <div class="field">
+                <label for="crypto-coin">Network</label>
+                <select id="crypto-coin">
+                  <option value="bitcoin" selected>Bitcoin</option>
+                  <option value="ethereum">Ethereum</option>
+                  <option value="solana">Solana</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="crypto-address">Address</label>
+                <input id="crypto-address" type="text" spellcheck="false" placeholder="Wallet address" />
+              </div>
+              <div class="field">
+                <label for="crypto-amount">Amount (optional)</label>
+                <input id="crypto-amount" type="text" inputmode="decimal" placeholder="0.01" />
+              </div>
+            </div>
+
+            <div class="payload-panel" data-payload-panel="event" hidden>
+              <div class="field">
+                <label for="event-title">Title</label>
+                <input id="event-title" type="text" placeholder="Studio opening" />
+              </div>
+              <div class="field">
+                <label for="event-location">Location</label>
+                <input id="event-location" type="text" />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="event-start">Starts</label>
+                  <input id="event-start" type="datetime-local" />
+                </div>
+                <div class="field">
+                  <label for="event-end">Ends</label>
+                  <input id="event-end" type="datetime-local" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="event-desc">Description</label>
+                <textarea id="event-desc" rows="2"></textarea>
+              </div>
+            </div>
           </div>
 
           <fieldset class="field styles">
@@ -57,6 +238,17 @@
           <fieldset class="field kits">
             <legend>Kit</legend>
             <div class="kit-grid" id="kit-grid" role="listbox" aria-label="Poster brand kits"></div>
+            <p class="hint">Kits dress the square poster export. Color pickers stay independent.</p>
+          </fieldset>
+
+          <fieldset class="field frames">
+            <legend>Frame</legend>
+            <div class="frame-grid" id="frame-grid" role="listbox" aria-label="QR frames"></div>
+            <div class="field" id="frame-text-wrap" hidden>
+              <label for="frame-text">Frame text</label>
+              <input id="frame-text" type="text" maxlength="28" value="SCAN ME" />
+            </div>
+            <p class="hint">Frames wrap PNG and copy exports. Posters keep the kit instead.</p>
           </fieldset>
 
           <div class="color-grid">
@@ -92,6 +284,11 @@
                 <span id="corner-dot-hex" class="hex">#000000</span>
               </div>
             </div>
+          </div>
+
+          <div id="contrast-meter" class="contrast-meter contrast-excellent">
+            <span class="contrast-dot"></span>
+            <span id="contrast-text" class="contrast-text">Excellent contrast (21.0:1) — Highly scannable</span>
           </div>
 
           <div class="field-row">
@@ -156,30 +353,70 @@
 
           <fieldset class="field logo-block">
             <legend>Center logo</legend>
-            <div class="field">
-              <label for="logo-url">Image URL</label>
-              <input
-                id="logo-url"
-                type="url"
-                inputmode="url"
-                placeholder="https://…/logo.png"
-                spellcheck="false"
-              />
+
+            <div class="brand-icons-row" id="brand-icons-row">
+              <span class="brand-icons-label">Popular icons</span>
+              <div class="icon-presets-grid" id="icon-presets-grid"></div>
             </div>
+
             <div class="field">
-              <label for="logo-file">Or upload file</label>
-              <input id="logo-file" type="file" accept="image/*" />
+              <input id="logo-file" type="file" accept="image/*" class="visually-hidden" />
+
+              <div id="logo-upload-zone" class="logo-upload-zone" role="button" tabindex="0">
+                <svg class="upload-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="upload-zone-main">Choose image file or drag and drop</span>
+              </div>
+
+              <div id="logo-active-container" class="logo-active-container" hidden>
+                <div class="logo-active-info" id="logo-info-trigger" role="button" tabindex="0" title="Replace logo file">
+                  <div class="logo-thumb-wrapper">
+                    <img id="logo-preview-thumb" class="logo-preview-thumb" alt="Logo preview" />
+                  </div>
+                  <div class="logo-active-details">
+                    <span class="logo-active-title">Attached logo <span class="badge-change">Replace</span></span>
+                    <span id="logo-active-name" class="logo-active-name"></span>
+                  </div>
+                </div>
+                <button type="button" id="delete-logo-btn" class="btn-delete-logo" title="Delete current logo" aria-label="Delete logo">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  Delete
+                </button>
+              </div>
             </div>
+
+            <div class="field">
+              <label for="logo-url">Or image URL</label>
+              <div class="input-action-row">
+                <input
+                  id="logo-url"
+                  type="url"
+                  inputmode="url"
+                  placeholder="https://…/logo.png"
+                  spellcheck="false"
+                />
+                <button type="button" id="clear-logo-url" class="btn-input-clear" title="Clear URL" aria-label="Clear URL" hidden>×</button>
+              </div>
+            </div>
+
             <div class="field">
               <label for="logo-size">Logo size <span id="logo-size-label">0.28</span></label>
               <input id="logo-size" type="range" min="0.15" max="0.4" step="0.01" value="0.28" />
             </div>
+
             <label class="check-row" for="hide-dots">
               <input id="hide-dots" type="checkbox" checked />
               <span>Hide dots under logo</span>
             </label>
-            <p class="hint">Optional overlay. Encoded data stays your link.</p>
-            <button type="button" id="clear-logo" class="btn ghost" hidden>Clear logo</button>
+            <p class="hint">Optional overlay. Encoded data stays whatever you typed above.</p>
           </fieldset>
         </section>
 
@@ -197,14 +434,26 @@
               <button type="button" id="export-svg" class="btn secondary">Export SVG</button>
               <button type="button" id="export-poster" class="btn secondary">Export poster</button>
               <button type="button" id="export-motion" class="btn secondary">Export motion</button>
+              <button type="button" id="btn-copy-img" class="btn secondary" title="Copy to clipboard">Copy</button>
+              <button type="button" id="save-design" class="btn secondary">Save</button>
               <button type="button" id="export-3d-png" class="btn secondary" hidden>Export 3D PNG</button>
             </div>
           </div>
           <div class="preview-stage" id="preview-stage">
             <div id="qr" class="qr-canvas" role="img" aria-label="Artistic QR code preview"></div>
+            <div id="qr-frame" class="qr-frame" hidden></div>
             <div id="qr3d" class="qr-3d" hidden aria-label="3D QR code preview"></div>
           </div>
           <p id="status" class="status" aria-live="polite"></p>
+
+          <div class="library">
+            <div class="library-toolbar">
+              <h3>Library</h3>
+              <span class="library-hint">Saved on this device</span>
+            </div>
+            <div id="favorites-row" class="library-row" hidden></div>
+            <div id="history-row" class="library-row"></div>
+          </div>
         </section>
       </main>
 
@@ -212,6 +461,21 @@
         <span>Runs in your browser · export locally</span>
       </footer>
     </div>
+
+    <dialog id="scanner-dialog" class="scanner-dialog">
+      <div class="scanner-card">
+        <h2>Scan a QR code</h2>
+        <div id="scanner-host" class="scanner-host"></div>
+        <p id="scanner-status" class="scanner-status">Point the camera at a code, or upload a photo.</p>
+        <div class="scanner-actions">
+          <label class="btn secondary scan-upload">
+            Upload photo
+            <input id="scan-file" type="file" accept="image/*" class="visually-hidden" />
+          </label>
+          <button type="button" id="scanner-close" class="btn ghost">Close</button>
+        </div>
+      </div>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

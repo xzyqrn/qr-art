@@ -31,13 +31,14 @@ Deploy the **`dist/`* *folder as a static site (build command `npm run build`, o
 
 ## Features
 
-- Link / URL only as the encoded payload (no image/video hosting)
+- Encoded payloads: **link**, **Wi-Fi**, **vCard**, **WhatsApp**, **SMS**, **email**, **phone**, **text**, **crypto**, and **calendar event**, plus **Scan QR** (camera or photo)
 - Fifteen art presets: **Base** (classic default), house styles **void**, **newsprint**, **signal**, **static**, pattern styles **mosaic**, **beads**, **lattice**, **pixel** (module shapes only — colors stay with the pickers), then **Neon Glow**, **Pastel Soft**, **Ink Wash**, **Sunset Gradient**, **Mono Elegant**, **Playful Dots** — plus **Surprise me** (or press `S`) to roll a house style
 - Live preview while typing or changing styles
 - **3D mode** (toggle next to Preview): extrudes the QR matrix with Three.js (orbit, colors, Export 3D PNG). Style shapes/kits stay 2D-only.
-- Independent colors for dots, background, outer corners, and inner corners; optional **transparent background** (PNG/SVG alpha; poster kits keep the outer frame); dot, corner square & corner dot shapes; size, margin, and error-correction controls
-- Optional center logo via image URL or local file upload, with logo size and hide-dots-under-logo options (logo overlays the QR; data stays the link)
-- Export **PNG**, **SVG**, square **poster PNG**, and animated **motion GIF** (subtle scale pulse) with brand **kits** (paper / stamp / ticket / film frames; color pickers stay independent of style & kit)
+- Independent colors for dots, background, outer corners, and inner corners; optional **transparent background** (PNG/SVG alpha; poster kits keep the outer frame); live **contrast** check; dot, corner square & corner dot shapes; size, margin, and error-correction controls
+- Optional center logo via preset icons, image URL, or local file upload, with logo size and hide-dots-under-logo options
+- **Frames** (badge, banner, bubble, phone, ribbon) on PNG/copy; **kits** (paper / stamp / ticket / film) on square poster export
+- Export **PNG**, **SVG**, square **poster PNG**, and animated **motion GIF**; copy to clipboard; save designs to a local library
 - Mobile-friendly layout, labeled controls, Base style default on first paint
 
 ## Zip / source distribution
