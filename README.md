@@ -1,62 +1,43 @@
 # xzyqrn qr
 
-Print-studio style QR generator from **xzyqrn qr**. Paste a URL, pick a preset, tweak colors, optionally add a center logo, and export PNG or SVG.
+Not another boring square. Design a QR code in the browser, then export it.
 
-Built with **Vite + TypeScript**, [`qr-code-styling`](https://www.npmjs.com/package/qr-code-styling) (2D), [`qrcode`](https://www.npmjs.com/package/qrcode) + [`three`](https://www.npmjs.com/package/three) (3D). No backend, no env secrets — static and Cloudflare Pages–ready.
+Vite, TypeScript, [qr-code-styling](https://www.npmjs.com/package/qr-code-styling), [Three.js](https://threejs.org), [gifenc](https://www.npmjs.com/package/gifenc), and [jsQR](https://www.npmjs.com/package/jsqr). No backend.
 
-## Quick start
+![xzyqrn qr](docs/screenshot.png)
 
-```bash
-npm install
-npm run dev
-```
+## How to use
 
-Open the local URL Vite prints (usually `http://localhost:5173`).
+### Encoded content
 
-## Production build
+Pick what the code should hold: a link, Wi-Fi network, vCard, WhatsApp, SMS, email, phone number, plain text, a crypto address, or a calendar event.
 
-```bash
-npm run build
-```
+Fill in the fields, or click Scan QR and point a camera at an existing code. You can also upload a photo.
 
-Output lands in `dist/`. Preview locally:
+### Style
 
-```bash
-npm run preview
-```
+Click a preset, or Surprise me (the `S` key does the same). House styles change colors and shapes. Shape presets (mosaic, beads, lattice, pixel) only change the dots; your color pickers stay as they are.
 
-### Cloudflare Pages
+Further down the page you can pick a kit (used on poster export), a frame, colors, a transparent background, and an optional center logo.
 
-Deploy the `dist/` folder as a static site (build command `npm run build`, output directory `dist`). `vite.config.ts` sets `base: "./"` so asset paths work on project or subdirectory deploys.
+### Preview
 
-## Features
+- **2D** is the still design.
+- **Motion** plays the looping pulse and sheen. Export motion saves that loop as a GIF.
+- **3D** extrudes the code so you can orbit it.
 
-- Encoded payloads: **link**, **Wi-Fi**, **vCard**, **WhatsApp**, **SMS**, **email**, **phone**, **text**, **crypto**, and **calendar event**, plus **Scan QR** (camera or photo)
-- Fifteen art presets: **Base** (classic default), house styles **void**, **newsprint**, **signal**, **static**, pattern styles **mosaic**, **beads**, **lattice**, **pixel** (module shapes only — colors stay with the pickers), then **Neon Glow**, **Pastel Soft**, **Ink Wash**, **Sunset Gradient**, **Mono Elegant**, **Playful Dots** — plus **Surprise me** (or press `S`) to roll a house style
-- Live preview while typing or changing styles
-- **3D mode** (toggle next to Preview): extrudes the QR matrix with Three.js (orbit, colors, Export 3D PNG). Style shapes/kits stay 2D-only.
-- Independent colors for dots, background, outer corners, and inner corners; optional **transparent background** (PNG/SVG alpha; poster kits keep the outer frame); live **contrast** check; dot, corner square & corner dot shapes; size, margin, and error-correction controls
-- Optional center logo via preset icons, image URL, or local file upload, with logo size and hide-dots-under-logo options
-- **Frames** (badge, banner, bubble, phone, ribbon) on PNG/copy; **kits** (paper / stamp / ticket / film) on square poster export
-- Export **PNG**, **SVG**, square **poster PNG**, and animated **motion GIF**; copy to clipboard; save designs to a local library
-- Mobile-friendly layout, labeled controls, Base style default on first paint
+### Export
 
-## Zip / source distribution
+PNG, SVG, a square poster (uses the selected kit), or a motion GIF. Copy puts the current 2D image on the clipboard. Save stores the design in a library on this device.
 
-If you received `qr-art.zip`, it excludes `node_modules/` and `dist/` to stay small. After unzipping:
+## Tips
 
-```bash
-npm install
-npm run build
-```
+Keep the encoded text short when you can. Long payloads make denser codes that are harder to scan.
 
-## Limitations
+If you load a logo from a URL, that host has to allow CORS or canvas export will fail. Uploading a file avoids that.
 
-- Very long URLs can produce denser (harder to scan) codes -- keep links short when possible.
-- Remote logo URLs must allow CORS for canvas export; local file upload avoids that.
-- Scanning reliability depends on contrast, logo size, and printer/screen quality. Error correction is set to **H**.
-- Artistic styles are decorative; always test-scan before printing or sharing widely.
+Test-scan before you print or share. Error correction defaults to H (~30%).
 
 ## License
 
-MIT — use freely.
+[MIT](LICENSE)

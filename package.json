@@ -2,6 +2,7 @@
   "name": "qr-art",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Artistic QR code generator",
   "type": "module",
   "scripts": {
