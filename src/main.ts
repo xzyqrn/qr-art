@@ -48,6 +48,13 @@ const DEFAULT_URL = "https://example.com";
 const DEFAULT_STYLE: ArtStyleId = "base";
 const DEFAULT_KIT: KitId = "paper";
 const HOUSE_SURPRISE_IDS: ArtStyleId[] = ["void", "newsprint", "signal", "static"];
+const MOTION_FRAME_COUNT = 18;
+const MOTION_DELAY_MS = 70;
+const MOTION_PULSE = 0.04;
+const MOTION_SHEEN = 0.14;
+const MOTION_DURATION_MS = MOTION_FRAME_COUNT * MOTION_DELAY_MS;
+
+type PreviewMode = "2d" | "motion" | "3d";
 const FRAME_PRESETS: { id: FrameStyle; name: string; description: string }[] = [
   { id: "none", name: "None", description: "Bare code" },
   { id: "bottom-badge", name: "Badge", description: "CTA under the code" },
@@ -140,6 +147,7 @@ const qrFrameHost = $<HTMLElement>("#qr-frame");
 const qr3dHost = $<HTMLElement>("#qr3d");
 const statusEl = $<HTMLElement>("#status");
 const mode2dBtn = $<HTMLButtonElement>("#mode-2d");
+const modeMotionBtn = $<HTMLButtonElement>("#mode-motion");
 const mode3dBtn = $<HTMLButtonElement>("#mode-3d");
 const exportPngBtn = $<HTMLButtonElement>("#export-png");
 const exportSvgBtn = $<HTMLButtonElement>("#export-svg");
@@ -164,9 +172,11 @@ let payloadType: PayloadType = "url";
 let logoDataUrl: string | null = null;
 let logoFileName: string | null = null;
 let activePresetId: string | null = null;
+let payloadAutoLogo = false;
+let logoApplyGen = 0;
 let debounceTimer = 0;
 let frameTimer = 0;
-let previewMode: "2d" | "3d" = "2d";
+let previewMode: PreviewMode = "2d";
 const qr3d = new Qr3dViewer();
 const cameraScanner = new CameraScanner();
 
@@ -565,7 +575,7 @@ function maybeFrame(src: HTMLCanvasElement): HTMLCanvasElement {
 
 function refreshFramePreview(): void {
   const src = getRawQrCanvas();
-  if (!src || previewMode === "3d") {
+  if (!src || previewMode === "3d" || previewMode === "motion") {
     qrFrameHost.hidden = true;
     qrHost.classList.remove("is-framed-away");
     return;
@@ -591,12 +601,17 @@ function getVisibleQrCanvas(): HTMLCanvasElement | null {
 
 function syncModeUI(): void {
   const is3d = previewMode === "3d";
-  mode2dBtn.setAttribute("aria-pressed", is3d ? "false" : "true");
+  const isMotion = previewMode === "motion";
+  mode2dBtn.setAttribute("aria-pressed", previewMode === "2d" ? "true" : "false");
+  modeMotionBtn.setAttribute("aria-pressed", isMotion ? "true" : "false");
   mode3dBtn.setAttribute("aria-pressed", is3d ? "true" : "false");
   previewStage.classList.toggle("is-3d", is3d);
+  previewStage.classList.toggle("is-motion", isMotion);
+  previewStage.style.setProperty("--qr-motion-duration", `${MOTION_DURATION_MS}ms`);
   qrHost.hidden = is3d;
-  qrFrameHost.hidden = is3d || selectedFrame === "none";
+  qrFrameHost.hidden = is3d || isMotion || selectedFrame === "none";
   qr3dHost.hidden = !is3d;
+  if (is3d || isMotion) qrHost.classList.remove("is-framed-away");
   exportPngBtn.hidden = is3d;
   exportSvgBtn.hidden = is3d;
   exportPosterBtn.hidden = is3d;
@@ -604,6 +619,10 @@ function syncModeUI(): void {
   btnCopyImg && (btnCopyImg.hidden = is3d);
   saveDesignBtn.hidden = is3d;
   export3dPngBtn.hidden = !is3d;
+  exportPngBtn.classList.toggle("primary", !isMotion);
+  exportPngBtn.classList.toggle("secondary", isMotion);
+  exportMotionBtn.classList.toggle("primary", isMotion);
+  exportMotionBtn.classList.toggle("secondary", !isMotion);
   if (!is3d) qrHost.style.transform = "";
 }
 
@@ -636,7 +655,17 @@ function render(): void {
     qr.update(options);
     window.clearTimeout(frameTimer);
     frameTimer = window.setTimeout(refreshFramePreview, 40);
-    setStatus(`Encoded: ${summarizePayload(String(options.data ?? DEFAULT_URL))}`);
+    const encoded = `Encoded: ${summarizePayload(String(options.data ?? DEFAULT_URL))}`;
+    if (previewMode === "motion") {
+      const paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setStatus(
+        paused
+          ? `${encoded} · motion preview paused (reduced motion)`
+          : `${encoded} · motion loop — Export motion saves this as a GIF`,
+      );
+    } else {
+      setStatus(encoded);
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : "Could not render QR";
     setStatus(message, true);
@@ -648,7 +677,7 @@ function scheduleRender(): void {
   debounceTimer = window.setTimeout(render, 120);
 }
 
-function setPreviewMode(mode: "2d" | "3d"): void {
+function setPreviewMode(mode: PreviewMode): void {
   if (previewMode === mode) return;
   previewMode = mode;
   syncModeUI();
@@ -756,17 +785,25 @@ const PAYLOAD_PRESET: Partial<Record<PayloadType, string>> = {
   phone: "phone",
 };
 
-function applyPreset(id: string): void {
+function applyPreset(id: string, fromPayload = false): void {
   const icon = PRESET_ICONS.find((item) => item.id === id);
   if (!icon) return;
-  void applyLogoSource(iconToDataUrl(icon.svg), `${icon.name} logo`, id);
+  if (fromPayload) payloadAutoLogo = true;
+  void applyLogoSource(iconToDataUrl(icon.svg), `${icon.name} logo`, id, fromPayload);
 }
 
 function maybeApplyPayloadIcon(): void {
   const id = PAYLOAD_PRESET[payloadType];
-  if (!id) return;
-  if (logoDataUrl && activePresetId === null) return;
-  applyPreset(id);
+  const hasUserLogo = Boolean(logoDataUrl || logoUrlInput.value.trim()) && !payloadAutoLogo;
+  if (hasUserLogo) return;
+
+  if (!id) {
+    if (payloadAutoLogo) resetLogoState();
+    return;
+  }
+
+  if (activePresetId === id && logoDataUrl) return;
+  applyPreset(id, true);
 }
 
 function updateLogoClearVisibility(): void {
@@ -796,20 +833,30 @@ function updateLogoClearVisibility(): void {
   }
 }
 
-async function applyLogoSource(src: string, name: string, presetId: string | null = null): Promise<void> {
+async function applyLogoSource(
+  src: string,
+  name: string,
+  presetId: string | null = null,
+  fromPayload = false,
+): Promise<void> {
+  const gen = ++logoApplyGen;
   try {
     const prepared = src.trim().startsWith("<svg") ? iconToDataUrl(src) : src;
-    logoDataUrl = prepared.startsWith("data:image/png")
+    const next = prepared.startsWith("data:image/png")
       ? prepared
       : await rasterizeToPngDataUrl(prepared);
+    if (gen !== logoApplyGen) return;
+    logoDataUrl = next;
     logoFileName = name;
     logoUrlInput.value = "";
     activePresetId = presetId;
+    payloadAutoLogo = fromPayload;
     updateLogoClearVisibility();
     syncPresetIconUI();
     setStatus(`Applied ${name}`);
     render();
   } catch (err) {
+    if (gen !== logoApplyGen) return;
     const message = err instanceof Error ? err.message : "Could not apply logo";
     setStatus(message, true);
   }
@@ -834,14 +881,20 @@ function processLogoFile(file: File): void {
   else reader.readAsDataURL(file);
 }
 
-function clearLogo(): void {
+function resetLogoState(): void {
+  logoApplyGen += 1;
   logoDataUrl = null;
   logoFileName = null;
   activePresetId = null;
+  payloadAutoLogo = false;
   logoUrlInput.value = "";
   logoFileInput.value = "";
   updateLogoClearVisibility();
   syncPresetIconUI();
+}
+
+function clearLogo(): void {
+  resetLogoState();
   setStatus("Logo removed");
   render();
 }
@@ -1192,8 +1245,8 @@ async function exportMotion(): Promise<void> {
       return;
     }
 
-    const FRAME_COUNT = 18;
-    const DELAY_MS = 70;
+    const FRAME_COUNT = MOTION_FRAME_COUNT;
+    const DELAY_MS = MOTION_DELAY_MS;
     const outSize = Math.min(Math.max(qrCanvas.width, 200), 480);
 
     const frameCanvas = document.createElement("canvas");
@@ -1213,7 +1266,7 @@ async function exportMotion(): Promise<void> {
 
     for (let i = 0; i < FRAME_COUNT; i++) {
       const t = i / FRAME_COUNT;
-      const scale = 1 + 0.025 * Math.sin(t * Math.PI * 2);
+      const scale = 1 + MOTION_PULSE * Math.sin(t * Math.PI * 2);
       const angle = t * Math.PI * 2;
 
       if (useAlpha) {
@@ -1234,8 +1287,8 @@ async function exportMotion(): Promise<void> {
       ctx.rotate(angle);
       const grad = ctx.createLinearGradient(-outSize / 2, 0, outSize / 2, 0);
       grad.addColorStop(0, "rgba(255,255,255,0)");
-      grad.addColorStop(0.45, "rgba(255,255,255,0.07)");
-      grad.addColorStop(0.55, "rgba(255,255,255,0.07)");
+      grad.addColorStop(0.45, `rgba(255,255,255,${MOTION_SHEEN})`);
+      grad.addColorStop(0.55, `rgba(255,255,255,${MOTION_SHEEN})`);
       grad.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = grad;
       ctx.fillRect(-outSize / 2, -outSize / 2, outSize, outSize);
@@ -1536,7 +1589,7 @@ function setupPreviewTilt(): void {
   };
 
   const onMove = (e: MouseEvent) => {
-    if (previewMode === "3d" || selectedFrame !== "none" || reduceMotion.matches) {
+    if (previewMode === "3d" || previewMode === "motion" || selectedFrame !== "none" || reduceMotion.matches) {
       resetTilt();
       return;
     }
@@ -1678,6 +1731,7 @@ logoUrlInput.addEventListener("input", () => {
     logoDataUrl = null;
     logoFileInput.value = "";
     activePresetId = null;
+    payloadAutoLogo = false;
     syncPresetIconUI();
   }
   updateLogoClearVisibility();
@@ -1689,6 +1743,7 @@ clearLogoUrlBtn?.addEventListener("click", clearLogoUrl);
 
 surpriseBtn.addEventListener("click", surpriseMe);
 mode2dBtn.addEventListener("click", () => setPreviewMode("2d"));
+modeMotionBtn.addEventListener("click", () => setPreviewMode("motion"));
 mode3dBtn.addEventListener("click", () => setPreviewMode("3d"));
 exportPngBtn.addEventListener("click", () => void exportFile("png"));
 exportSvgBtn.addEventListener("click", () => void exportFile("svg"));

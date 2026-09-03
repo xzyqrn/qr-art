@@ -27,7 +27,7 @@ npm run preview
 
 ### Cloudflare Pages
 
-Pushes to `main` deploy via [`.github/workflows/cloudflare-pages.yml`](.github/workflows/cloudflare-pages.yml) (`npm run build` → `dist/`, project `qr-art`). The workflow needs repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `vite.config.ts` sets `base: "./"` so asset paths work on project or subdirectory deploys.
+Deploy the `dist/` folder as a static site (build command `npm run build`, output directory `dist`). `vite.config.ts` sets `base: "./"` so asset paths work on project or subdirectory deploys.
 
 ## Features
 
