@@ -1,10 +1,23 @@
+<div align="center">
+
 # xzyqrn qr
 
-Not another boring square. Design a QR code in the browser, then export it.
+<hr />
 
-Vite, TypeScript, [qr-code-styling](https://www.npmjs.com/package/qr-code-styling), [Three.js](https://threejs.org), [gifenc](https://www.npmjs.com/package/gifenc), and [jsQR](https://www.npmjs.com/package/jsqr). No backend.
+**Not another boring square.**
+
+Design a QR code in the browser, then export it.
+
+Created by **xzyqrn**.
+
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Three.js](https://img.shields.io/badge/Three.js-enabled-99cc00?logo=threedotjs&logoColor=white)](https://threejs.org)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 ![xzyqrn qr](docs/screenshot.png)
+
+</div>
 
 ## How to use
 
